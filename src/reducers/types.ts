@@ -1,11 +1,12 @@
 export type Expense = {
-  name: string;
   description: string;
+  amount: Number;
   date: Date;
-  _id: string;
+  _id?: string;
 };
 
 export type ExpenseState = {
   expense: Expense | null;
   expensies: Expense[];
+  tax: Number;
 };

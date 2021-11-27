@@ -3,8 +3,6 @@ import { useDispatch } from 'react-redux';
 import { ThunkAction } from 'redux-thunk';
 import rootReducer from './reducers';
 
-// const middleware = [...getDefaultMiddleware()];
-
 const store = configureStore({
   reducer: rootReducer
 });

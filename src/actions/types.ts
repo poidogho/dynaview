@@ -1,3 +1,5 @@
 export const GET_EXPENSIES = 'GET_EXPENSIES';
 export const CREATE_EXPENSE = 'CREATE_EXPENSE';
+export const UPDATE_EXPENSE = 'UPDATE_EXPENSE';
+export const DELETE_EXPENSE = 'DELETE_EXPENSE';
 export const ERROR = 'ERROR';

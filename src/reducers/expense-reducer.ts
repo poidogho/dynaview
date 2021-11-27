@@ -1,9 +1,16 @@
-import { GET_EXPENSIES, ERROR } from '../actions/types';
+import {
+  GET_EXPENSIES,
+  CREATE_EXPENSE,
+  ERROR,
+  UPDATE_EXPENSE,
+  DELETE_EXPENSE
+} from '../actions/types';
 import { ExpenseState } from './types';
 
 const initialState: ExpenseState = {
   expense: null,
-  expensies: []
+  expensies: [],
+  tax: 0
 };
 
 export function ExpenseReducer(state = initialState, action: any) {
@@ -11,7 +18,19 @@ export function ExpenseReducer(state = initialState, action: any) {
     case GET_EXPENSIES:
       return {
         ...state,
-        courses: action.payload
+        expensies: action.payload.expensies,
+        tax: action.payload.tax
+      };
+    case CREATE_EXPENSE:
+    case UPDATE_EXPENSE:
+      return {
+        ...state,
+        expense: action.payload
+      };
+    case DELETE_EXPENSE:
+      return {
+        ...state,
+        expense: null
       };
     default:
       return state;
