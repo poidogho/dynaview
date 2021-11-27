@@ -29,7 +29,7 @@ const useStyles = makeStyles({
 });
 
 const style = {
-  position: 'absolute',
+  position: 'absolute' as 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
@@ -78,13 +78,7 @@ const CreateExpense = () => {
         }}
       >
         <Fade in={open}>
-          <Box
-            sx={{
-              width: 300,
-              height: 300,
-              backgroundColor: 'primary.dark'
-            }}
-          >
+          <Box sx={style}>
             <TextField
               type="text"
               value={description}
@@ -105,21 +99,6 @@ const CreateExpense = () => {
         </Fade>
       </Modal>
     </div>
-    //  <div>
-    //    <Button className={classes.button} onClick={handleOpen}>
-    //      Add new expense
-    //    </Button>
-    //    <Modal
-    //      open={open}
-    //      onClose={handleClose}
-    //      aria-labelledby="modal-modal-title"
-    //      aria-describedby="modal-modal-description"
-    //    >
-    //      <Box>
-
-    //      </Box>
-    //    </Modal>
-    //  </div>
   );
 };
 

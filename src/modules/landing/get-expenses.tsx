@@ -1,23 +1,34 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
+import {
+  Table,
+  Modal,
+  Fade,
+  Box,
+  Backdrop,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions
+} from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { Button } from '@mui/material';
-import { getExpensies, deleteExpense } from '../../actions/expense-actions';
+import {
+  getExpensies,
+  deleteExpense,
+  updateExpense
+} from '../../actions/expense-actions';
 import { RootState } from '../../store';
-
-type expense = {
-  description: string;
-  amount: Number;
-  date: Date;
-  _id: string;
-};
+import { Expense } from '../models';
+import { dateStringToDate, expenseTotals } from '../expense-logic';
 
 const useStyles = makeStyles({
   editButton: {
@@ -34,10 +45,49 @@ const useStyles = makeStyles({
   }
 });
 
+const style = {
+  position: 'absolute' as 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4
+};
+
 const GetExpensies = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const expensies = useSelector<RootState, expense[]>(
+  const [open, setOpen] = useState(false);
+  const [expense, setExpense] = useState<Expense>({
+    description: '',
+    amount: 0,
+    date: new Date(),
+    _id: ''
+  });
+  const [description, setDescription] = useState(expense?.description);
+  const [amount, setAmount] = useState(expense?.amount);
+  const [date, setDate] = useState(expense?.date);
+
+  const handleOpen = (expense: Expense) => {
+    setExpense(expense);
+    setDescription(expense.description);
+    setAmount(expense.amount);
+    setDate(expense.date);
+    setOpen(true);
+  };
+  const handleClose = () => setOpen(false);
+
+  const handleClickOpen = (expense: Expense) => {
+    setDescription(expense.description);
+    setAmount(expense.amount);
+    setDate(expense.date);
+    setOpen(true);
+  };
+
+  const expensies = useSelector<RootState, Expense[]>(
     (state) => state.expensies.expensies
   );
 
@@ -48,24 +98,19 @@ const GetExpensies = () => {
     dispatch(getExpensies());
   }, [dispatch]);
 
-  const deleteExpense = (expenseId: string) => {
+  const deleteAnExpense = (expenseId: string) => {
     dispatch(deleteExpense(expenseId));
   };
 
-  const dateStringToDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    let time = dateStr.split('T')[1].split(':');
-    const [mins, secs] = time;
-    const year = date.getFullYear();
-    let month = (date.getMonth() + 1).toString();
-    let day = date.getDate().toString();
-    if (Number(day) < 10) day = `0${day}`;
-    if (Number(month) < 10) month = `0${month}`;
-
-    return `${year}-${month}-${day} at ${mins}:${secs}`;
+  const editAnExpense = () => {
+    const updatedExpense = {
+      description,
+      amount,
+      date,
+      _id: expense?._id
+    };
+    dispatch(updateExpense(updatedExpense));
   };
-
-  console.log(dateStringToDate('2021-11-27T23:49:54.981Z'));
 
   return (
     <div>
@@ -93,10 +138,15 @@ const GetExpensies = () => {
                       {dateStringToDate(expense.date.toString())}
                     </TableCell>
                     <TableCell>
-                      <Button className={classes.editButton}>Edit</Button>
+                      <Button
+                        className={classes.editButton}
+                        onClick={() => handleOpen(expense)}
+                      >
+                        Edit
+                      </Button>
                       <Button
                         className={classes.deleteButton}
-                        onClick={() => deleteExpense(expense._id)}
+                        onClick={() => handleClickOpen(expense)}
                       >
                         Delete
                       </Button>
@@ -107,6 +157,61 @@ const GetExpensies = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <Modal
+        aria-labelledby="transition-modal-title"
+        aria-describedby="transition-modal-description"
+        open={open}
+        onClose={handleClose}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500
+        }}
+      >
+        <Fade in={open}>
+          <Box sx={style}>
+            <TextField
+              label="Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+            <TextField
+              label="Amount"
+              value={amount}
+              onChange={(e) => setAmount(Number(e.target.value))}
+            />
+            <TextField
+              label="Date"
+              value={date}
+              type="date"
+              onChange={(e) => setDate(new Date(e.target.value))}
+            />
+            <Button onClick={editAnExpense}>Update Expense</Button>
+          </Box>
+        </Fade>
+      </Modal>
+
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {'Do you want to delete Expense?'}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            {`Deleting expense - ${description} is irreversible. Do you want to continue`}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>NO</Button>
+          <Button onClick={handleClose} autoFocus>
+            YES
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
