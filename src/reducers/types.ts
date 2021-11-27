@@ -8,5 +8,5 @@ export type Expense = {
 export type ExpenseState = {
   expense: Expense | null;
   expensies: Expense[];
-  tax: Number;
+  tax: number;
 };

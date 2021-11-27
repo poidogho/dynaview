@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Table,
@@ -21,27 +21,23 @@ import {
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { Button } from '@mui/material';
-import {
-  getExpensies,
-  deleteExpense,
-  updateExpense
-} from '../../actions/expense-actions';
+import { deleteExpense, updateExpense } from '../../actions/expense-actions';
 import { RootState } from '../../store';
 import { Expense } from '../models';
-import { dateStringToDate, expenseTotals } from '../expense-logic';
+import { dateStringToDate, taxInPercent } from '../expense-logic';
 
 const useStyles = makeStyles({
   editButton: {
-    color: 'black',
-    background: '#F9BE0B',
-    padding: '5px',
-    margin: '1px'
+    color: 'black !important',
+    background: '#F9BE0B !important',
+    padding: '5px !important',
+    margin: '1px !important'
   },
   deleteButton: {
-    color: 'white',
-    background: '#F1200C',
-    padding: '5px',
-    margin: '1px'
+    color: 'white !important',
+    background: '#F1200C !important',
+    padding: '5px !important',
+    margin: '1px !important'
   }
 });
 
@@ -57,22 +53,21 @@ const style = {
   p: 4
 };
 
-const GetExpensies = () => {
+interface ExpenseProp {
+  expenses: Expense[];
+}
+
+const GetExpensies = ({ expenses }: ExpenseProp) => {
   const classes = useStyles();
   const dispatch = useDispatch();
+
   const [open, setOpen] = useState(false);
-  const [expense, setExpense] = useState<Expense>({
-    description: '',
-    amount: 0,
-    date: new Date(),
-    _id: ''
-  });
-  const [description, setDescription] = useState(expense?.description);
-  const [amount, setAmount] = useState(expense?.amount);
-  const [date, setDate] = useState(expense?.date);
+  const [description, setDescription] = useState('');
+  const [amount, setAmount] = useState(0);
+  const [date, setDate] = useState(new Date());
+  const [_id, setId] = useState('');
 
   const handleOpen = (expense: Expense) => {
-    setExpense(expense);
     setDescription(expense.description);
     setAmount(expense.amount);
     setDate(expense.date);
@@ -87,16 +82,7 @@ const GetExpensies = () => {
     setOpen(true);
   };
 
-  const expensies = useSelector<RootState, Expense[]>(
-    (state) => state.expensies.expensies
-  );
-
-  const tax = useSelector<RootState, Number>((state) => state.expensies.tax);
-  const taxInPercent = Number(tax) / 100;
-
-  useEffect(() => {
-    dispatch(getExpensies());
-  }, [dispatch]);
+  const tax = useSelector<RootState, number>((state) => state.expensies.tax);
 
   const deleteAnExpense = (expenseId: string) => {
     dispatch(deleteExpense(expenseId));
@@ -107,7 +93,7 @@ const GetExpensies = () => {
       description,
       amount,
       date,
-      _id: expense?._id
+      _id
     };
     dispatch(updateExpense(updatedExpense));
   };
@@ -126,13 +112,13 @@ const GetExpensies = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {expensies && expensies.length
-              ? expensies.map((expense, index) => (
+            {expenses && expenses.length
+              ? expenses.map((expense, index) => (
                   <TableRow key={index}>
                     <TableCell>{expense.description}</TableCell>
                     <TableCell>{expense.amount}</TableCell>
                     <TableCell>
-                      {Number(expense.amount) * Number(taxInPercent)}
+                      {Number(expense.amount) * Number(taxInPercent(tax))}
                     </TableCell>
                     <TableCell>
                       {dateStringToDate(expense.date.toString())}
@@ -191,7 +177,7 @@ const GetExpensies = () => {
         </Fade>
       </Modal>
 
-      <Dialog
+      {/* <Dialog
         open={open}
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
@@ -211,7 +197,7 @@ const GetExpensies = () => {
             YES
           </Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
     </div>
   );
 };

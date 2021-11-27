@@ -45,7 +45,7 @@ const Index = () => {
           </div>
         </div>
 
-        <GetExpensies />
+        <GetExpensies expenses={expenses} />
       </Container>
     </>
   );
