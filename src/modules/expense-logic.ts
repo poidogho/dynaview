@@ -46,7 +46,6 @@ export const defaultDate = (date: Date): string => {
 
 export const configureDate = (dateStr: string): string => {
   const newDate = dateStr.split('T');
-  console.log(newDate);
   newDate[1] = newDate[newDate.length - 1].substring(0, 5);
   return newDate.join('T');
 };

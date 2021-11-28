@@ -9,7 +9,6 @@ interface ErrorProps {
 }
 
 const Error = ({ errors, setErrors }: ErrorProps) => {
-  console.log(errors, 11111);
   return (
     <Stack sx={{ width: '100%' }} spacing={2}>
       {errors.length

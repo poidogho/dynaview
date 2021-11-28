@@ -153,7 +153,7 @@ const GetExpensies = ({ expenses }: ExpenseProp) => {
               <TableCell align="left">
                 <b>Date</b>
               </TableCell>
-              <TableCell align="left"></TableCell>
+              <TableCell align="right"></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -201,6 +201,7 @@ const GetExpensies = ({ expenses }: ExpenseProp) => {
       >
         <Fade in={open}>
           <Box sx={style}>
+            <h2>UpdateAn Expense</h2>
             <TextField
               fullWidth
               required
