@@ -92,22 +92,21 @@ const GetExpensies = ({ expenses }: ExpenseProp) => {
   const handleClose = () => setOpen(false);
 
   const handleClickOpen = (expense: Expense) => {
-    //@ts-ignore
-    console.log(setDate(expense.date), expense.date, typeof expense.date);
-    setDescription(expense.description);
-    setAmount(expense.amount);
-    //@ts-ignore
-    setDate(setDate(expense.date));
     setId(expense?._id);
     setDialogOpen(true);
   };
 
-  const handleDialogClose = () => setDialogOpen(false);
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
 
   const tax = useSelector<RootState, number>((state) => state.expensies.tax);
 
-  const deleteAnExpense = (expenseId: string) => {
-    dispatch(deleteExpense(expenseId));
+  const deleteAnExpense = () => {
+    if (_id) {
+      dispatch(deleteExpense(_id));
+      setDialogOpen(false);
+    }
   };
 
   const editAnExpense = () => {
@@ -233,7 +232,7 @@ const GetExpensies = ({ expenses }: ExpenseProp) => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDialogClose}>NO</Button>
-          <Button onClick={handleDialogClose} autoFocus>
+          <Button onClick={deleteAnExpense} autoFocus>
             YES
           </Button>
         </DialogActions>

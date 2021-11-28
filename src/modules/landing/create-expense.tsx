@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Box, Button, Modal, TextField, Backdrop, Fade } from '@mui/material';
 import { makeStyles } from '@mui/styles';

@@ -1,8 +1,6 @@
-import { Console } from 'console';
 import {
   GET_EXPENSIES,
   CREATE_EXPENSE,
-  ERROR,
   UPDATE_EXPENSE,
   DELETE_EXPENSE
 } from '../actions/types';
@@ -44,9 +42,13 @@ export function ExpenseReducer(state = initialState, action: any) {
         expensies: updatedExpenses
       };
     case DELETE_EXPENSE:
+      const deletedExpense = action.payload.expense;
+      const filteredExpenses = state.expensies.filter(
+        (expense) => expense._id !== deletedExpense._id
+      );
       return {
         ...state,
-        expense: null
+        expensies: filteredExpenses
       };
     default:
       return state;
