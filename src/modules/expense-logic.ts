@@ -40,6 +40,13 @@ export const defaultDate = (date: Date): string => {
   return newDate.join('T');
 };
 
+export const configureDate = (dateStr: string): string => {
+  const newDate = dateStr.split('T');
+  console.log(newDate);
+  newDate[1] = newDate[newDate.length - 1].substring(0, 5);
+  return newDate.join('T');
+};
+
 export const validateInput = (expense: Expense): string[] => {
   const errorMessages = [];
   if (expense.amount === 0) {

@@ -21,10 +21,17 @@ import {
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { Button } from '@mui/material';
+import Error from './error';
 import { deleteExpense, updateExpense } from '../../actions/expense-actions';
 import { RootState } from '../../store';
 import { Expense } from '../models';
-import { dateStringToDate, taxInPercent } from '../expense-logic';
+import {
+  dateStringToDate,
+  taxInPercent,
+  defaultDate,
+  configureDate,
+  validateInput
+} from '../expense-logic';
 
 const useStyles = makeStyles({
   editButton: {
@@ -40,6 +47,10 @@ const useStyles = makeStyles({
     margin: '1px !important'
   }
 });
+
+const itemsSpacing = {
+  margin: '5px'
+};
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -62,25 +73,36 @@ const GetExpensies = ({ expenses }: ExpenseProp) => {
   const dispatch = useDispatch();
 
   const [open, setOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState(0);
-  const [date, setDate] = useState(new Date());
-  const [_id, setId] = useState('');
+  const [date, setDate] = useState(defaultDate(new Date()));
+  const [_id, setId] = useState<string | undefined>('');
+  const [errors, setErrors] = useState<string[]>([]);
 
   const handleOpen = (expense: Expense) => {
+    console.log(expense);
     setDescription(expense.description);
     setAmount(expense.amount);
-    setDate(expense.date);
+    //@ts-ignore
+    setDate(configureDate(expense.date));
+    setId(expense?._id);
     setOpen(true);
   };
   const handleClose = () => setOpen(false);
 
   const handleClickOpen = (expense: Expense) => {
+    //@ts-ignore
+    console.log(setDate(expense.date), expense.date, typeof expense.date);
     setDescription(expense.description);
     setAmount(expense.amount);
-    setDate(expense.date);
-    setOpen(true);
+    //@ts-ignore
+    setDate(setDate(expense.date));
+    setId(expense?._id);
+    setDialogOpen(true);
   };
+
+  const handleDialogClose = () => setDialogOpen(false);
 
   const tax = useSelector<RootState, number>((state) => state.expensies.tax);
 
@@ -92,10 +114,18 @@ const GetExpensies = ({ expenses }: ExpenseProp) => {
     const updatedExpense = {
       description,
       amount,
-      date,
+      date: new Date(date),
       _id
     };
-    dispatch(updateExpense(updatedExpense));
+    const errors = validateInput(updatedExpense);
+    if (errors.length) {
+      setErrors(errors);
+    } else {
+      dispatch(updateExpense(updatedExpense));
+      setOpen(false);
+      setDescription('');
+      setAmount(0);
+    }
   };
 
   return (
@@ -157,29 +187,39 @@ const GetExpensies = ({ expenses }: ExpenseProp) => {
         <Fade in={open}>
           <Box sx={style}>
             <TextField
+              fullWidth
+              required
+              style={itemsSpacing}
               label="Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
             <TextField
+              fullWidth
+              required
+              style={itemsSpacing}
               label="Amount"
               value={amount}
               onChange={(e) => setAmount(Number(e.target.value))}
             />
             <TextField
+              fullWidth
+              required
               label="Date"
+              type="datetime-local"
               value={date}
-              type="date"
-              onChange={(e) => setDate(new Date(e.target.value))}
+              onChange={(e) => setDate(e.target.value)}
+              style={itemsSpacing}
             />
+            {errors.length ? <Error errors={errors} /> : undefined}
             <Button onClick={editAnExpense}>Update Expense</Button>
           </Box>
         </Fade>
       </Modal>
 
-      {/* <Dialog
-        open={open}
-        onClose={handleClose}
+      <Dialog
+        open={dialogOpen}
+        onClose={handleDialogClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
@@ -192,12 +232,12 @@ const GetExpensies = ({ expenses }: ExpenseProp) => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>NO</Button>
-          <Button onClick={handleClose} autoFocus>
+          <Button onClick={handleDialogClose}>NO</Button>
+          <Button onClick={handleDialogClose} autoFocus>
             YES
           </Button>
         </DialogActions>
-      </Dialog> */}
+      </Dialog>
     </div>
   );
 };

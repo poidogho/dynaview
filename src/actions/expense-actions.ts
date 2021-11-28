@@ -51,9 +51,8 @@ export const deleteExpense =
 
 export const updateExpense =
   (expense: Expense) => async (dispatch: Dispatch) => {
-    const expenseId = expense._id;
     axios
-      .patch(`${server}/api/expenses/${expenseId}`, expense)
+      .patch(`${server}/api/expenses/:expenseId`, expense)
       .then((res) => dispatch({ type: UPDATE_EXPENSE, payload: res.data }))
       .catch((err) => dispatch({ type: ERROR, payload: err }));
   };

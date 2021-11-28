@@ -1,3 +1,4 @@
+import { Console } from 'console';
 import {
   GET_EXPENSIES,
   CREATE_EXPENSE,
@@ -27,9 +28,20 @@ export function ExpenseReducer(state = initialState, action: any) {
         expensies: [...state.expensies, action.payload.expense]
       };
     case UPDATE_EXPENSE:
+      const updatedExpense = action.payload.expense;
+      const expenseIdx = state.expensies.findIndex(
+        (expense) => expense._id === updatedExpense._id
+      );
+      const updatedExpenses = [...state.expensies];
+      updatedExpenses[expenseIdx] = {
+        _id: updatedExpense._id,
+        description: updatedExpense.description,
+        amount: updatedExpense.amount,
+        date: updatedExpense.date
+      };
       return {
         ...state,
-        expense: action.payload
+        expensies: updatedExpenses
       };
     case DELETE_EXPENSE:
       return {
