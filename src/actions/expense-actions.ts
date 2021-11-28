@@ -1,6 +1,12 @@
 import { Dispatch } from 'redux';
 import { axios, getServer } from '../utils';
-import { GET_EXPENSIES, CREATE_EXPENSE, ERROR, DELETE_EXPENSE } from './types';
+import {
+  GET_EXPENSIES,
+  CREATE_EXPENSE,
+  ERROR,
+  DELETE_EXPENSE,
+  UPDATE_EXPENSE
+} from './types';
 import { Expense } from '../reducers/types';
 
 const server = getServer();
@@ -24,7 +30,7 @@ export const getExpensies = () => async (dispatch: Dispatch) => {
 
 export const createExpense =
   (expense: Expense) => async (dispatch: Dispatch) => {
-    axios
+    return axios
       .post(`${server}/api/expenses`, expense)
       .then((res) =>
         dispatch({
@@ -48,5 +54,6 @@ export const updateExpense =
     const expenseId = expense._id;
     axios
       .patch(`${server}/api/expenses/${expenseId}`, expense)
-      .then((res) => console.log(res));
+      .then((res) => dispatch({ type: UPDATE_EXPENSE, payload: res.data }))
+      .catch((err) => dispatch({ type: ERROR, payload: err }));
   };

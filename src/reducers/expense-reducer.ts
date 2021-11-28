@@ -22,6 +22,10 @@ export function ExpenseReducer(state = initialState, action: any) {
         tax: action.payload.tax
       };
     case CREATE_EXPENSE:
+      return {
+        ...state,
+        expensies: [...state.expensies, action.payload.expense]
+      };
     case UPDATE_EXPENSE:
       return {
         ...state,

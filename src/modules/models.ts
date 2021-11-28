@@ -4,3 +4,5 @@ export type Expense = {
   date: Date;
   _id?: string;
 };
+
+export type Errors = string[];

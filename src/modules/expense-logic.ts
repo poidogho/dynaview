@@ -33,3 +33,23 @@ export const expenseTotals = (
   );
   return { sumWithoutTax, sumWithTax };
 };
+
+export const defaultDate = (date: Date): string => {
+  const newDate = date.toISOString().split('T');
+  newDate[1] = newDate[newDate.length - 1].substring(0, 5);
+  return newDate.join('T');
+};
+
+export const validateInput = (expense: Expense): string[] => {
+  const errorMessages = [];
+  if (expense.amount === 0) {
+    errorMessages.push('Amount Field is Required');
+  }
+  if (!expense.date) {
+    errorMessages.push('Date field is Required');
+  }
+  if (!expense.description || expense.description.length === 0) {
+    errorMessages.push('Description Field is Required');
+  }
+  return errorMessages;
+};

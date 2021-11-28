@@ -1,32 +1,26 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  Box,
-  Button,
-  Typography,
-  Modal,
-  TextField,
-  Container,
-  Backdrop,
-  Fade
-} from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { Box, Button, Modal, TextField, Backdrop, Fade } from '@mui/material';
 import { makeStyles } from '@mui/styles';
+import Error from './error';
 import { createExpense } from '../../actions/expense-actions';
-import { RootState } from '../../store';
+import { validateInput, defaultDate } from '../expense-logic';
 
 const useStyles = makeStyles({
   button: {
-    justifyContent: 'flex-end',
-    backgroundColor: '#4CAF50',
-    border: 'none',
-    color: 'white',
-    padding: '15px 32px',
-    textAlign: 'center',
-    textdecoration: 'none',
-    display: 'inline-block',
-    fontSize: '16px'
+    backgroundColor: '#4CAF50 !important',
+    border: 'none !important',
+    color: 'white !important',
+    padding: '8px 16px !important',
+    textdecoration: 'none !important',
+    display: 'inline-block !important',
+    fontSize: '8px'
   }
 });
+
+const itemsSpacing = {
+  margin: '5px'
+};
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -44,21 +38,31 @@ const CreateExpense = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const [open, setOpen] = React.useState(false);
-  const [description, setDescription] = React.useState('');
-  const [amount, setAmount] = React.useState(0);
-  const [date, setDate] = React.useState(new Date());
+  const [open, setOpen] = useState(false);
+  const [description, setDescription] = useState('');
+  const [amount, setAmount] = useState(0);
+  const [date, setDate] = useState(defaultDate(new Date()));
+  const [errors, setErrors] = useState<string[]>([]);
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const onSubmit = () => {
-    //  e.preventDeault();
     const expense = {
       description,
       amount,
-      date
+      date: new Date(date)
     };
-    dispatch(createExpense(expense));
+
+    const errors = validateInput(expense);
+    if (errors.length) {
+      setErrors(errors);
+    } else {
+      dispatch(createExpense(expense));
+      setOpen(false);
+      setDescription('');
+      setAmount(0);
+    }
   };
 
   return (
@@ -79,21 +83,35 @@ const CreateExpense = () => {
       >
         <Fade in={open}>
           <Box sx={style}>
+            <h2>Create An Expense</h2>
             <TextField
+              fullWidth
+              required
+              label="Decription"
               type="text"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              style={itemsSpacing}
             />
             <TextField
+              fullWidth
+              required
+              label="Amount"
               type="number"
-              value={amount}
+              value={amount || ''}
+              style={itemsSpacing}
               onChange={(e) => setAmount(Number(e.target.value))}
             />
             <TextField
-              type="date"
+              fullWidth
+              required
+              label="Date"
+              type="datetime-local"
               value={date}
-              onChange={(e) => setDate(new Date(e.target.value))}
+              onChange={(e) => setDate(e.target.value)}
+              style={itemsSpacing}
             />
+            {errors.length ? <Error errors={errors} /> : undefined}
             <Button onClick={onSubmit}>SUBMIT</Button>
           </Box>
         </Fade>
