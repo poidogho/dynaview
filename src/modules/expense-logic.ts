@@ -19,6 +19,10 @@ export const taxInPercent = (tax: number) => {
   return tax / 100;
 };
 
+export const trimValues = (amount: number): number => {
+  return Number(parseFloat(amount.toString()).toFixed(2));
+};
+
 export const expenseTotals = (
   expenses: Expense[]
 ): { sumWithoutTax: number; sumWithTax: number } => {

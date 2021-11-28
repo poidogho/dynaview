@@ -15,6 +15,11 @@ const useStyles = makeStyles({
     textdecoration: 'none !important',
     display: 'inline-block !important',
     fontSize: '8px'
+  },
+  submitButton: {
+    background: '#4CAF50 !important',
+    color: 'white !important',
+    margin: '1px !important'
   }
 });
 
@@ -111,8 +116,10 @@ const CreateExpense = () => {
               onChange={(e) => setDate(e.target.value)}
               style={itemsSpacing}
             />
-            {errors.length ? <Error errors={errors} /> : undefined}
-            <Button onClick={onSubmit}>SUBMIT</Button>
+            <Error errors={errors} setErrors={setErrors} />
+            <Button onClick={onSubmit} className={classes.submitButton}>
+              SUBMIT
+            </Button>
           </Box>
         </Fade>
       </Modal>

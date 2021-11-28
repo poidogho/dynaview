@@ -30,10 +30,14 @@ import {
   taxInPercent,
   defaultDate,
   configureDate,
-  validateInput
+  validateInput,
+  trimValues
 } from '../expense-logic';
 
 const useStyles = makeStyles({
+  tableHeaders: {
+    fontWeight: 'bold'
+  },
   editButton: {
     color: 'black !important',
     background: '#F9BE0B !important',
@@ -44,6 +48,11 @@ const useStyles = makeStyles({
     color: 'white !important',
     background: '#F1200C !important',
     padding: '5px !important',
+    margin: '1px !important'
+  },
+  submitButton: {
+    background: '#4CAF50 !important',
+    color: 'white !important',
     margin: '1px !important'
   }
 });
@@ -81,7 +90,6 @@ const GetExpensies = ({ expenses }: ExpenseProp) => {
   const [errors, setErrors] = useState<string[]>([]);
 
   const handleOpen = (expense: Expense) => {
-    console.log(expense);
     setDescription(expense.description);
     setAmount(expense.amount);
     //@ts-ignore
@@ -133,10 +141,18 @@ const GetExpensies = ({ expenses }: ExpenseProp) => {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Description</TableCell>
-              <TableCell align="left">Amount</TableCell>
-              <TableCell align="left">Taxes ({tax}%)</TableCell>
-              <TableCell align="left">Date</TableCell>
+              <TableCell>
+                <b>Description</b>
+              </TableCell>
+              <TableCell align="left">
+                <b>Amount</b>
+              </TableCell>
+              <TableCell align="left">
+                <b>Taxes ({tax}%)</b>
+              </TableCell>
+              <TableCell align="left">
+                <b>Date</b>
+              </TableCell>
               <TableCell align="left"></TableCell>
             </TableRow>
           </TableHead>
@@ -145,9 +161,9 @@ const GetExpensies = ({ expenses }: ExpenseProp) => {
               ? expenses.map((expense, index) => (
                   <TableRow key={index}>
                     <TableCell>{expense.description}</TableCell>
-                    <TableCell>{expense.amount}</TableCell>
+                    <TableCell>{trimValues(expense.amount)}</TableCell>
                     <TableCell>
-                      {Number(expense.amount) * Number(taxInPercent(tax))}
+                      {trimValues(expense.amount * taxInPercent(tax))}
                     </TableCell>
                     <TableCell>
                       {dateStringToDate(expense.date.toString())}
@@ -210,8 +226,10 @@ const GetExpensies = ({ expenses }: ExpenseProp) => {
               onChange={(e) => setDate(e.target.value)}
               style={itemsSpacing}
             />
-            {errors.length ? <Error errors={errors} /> : undefined}
-            <Button onClick={editAnExpense}>Update Expense</Button>
+            <Error errors={errors} setErrors={setErrors} />
+            <Button onClick={editAnExpense} className={classes.submitButton}>
+              Update Expense
+            </Button>
           </Box>
         </Fade>
       </Modal>

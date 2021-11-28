@@ -6,7 +6,7 @@ import CreateExpense from './create-expense';
 import GetExpensies from './get-expenses';
 import { getExpensies } from '../../actions/expense-actions';
 import { RootState } from '../../store';
-import { expenseTotals } from '../expense-logic';
+import { expenseTotals, trimValues } from '../expense-logic';
 import { Expense } from '../models';
 
 const useStyles = makeStyles({
@@ -37,8 +37,8 @@ const Index = () => {
         <h1>Expense tracker</h1>
         <div className={classes.headings}>
           <div>
-            <p>The sub-total of expenses is {sumWithoutTax} $</p>
-            <p>The total with taxes is {sumWithTax} $</p>
+            <p>The sub-total of expenses is {trimValues(sumWithoutTax)} $</p>
+            <p>The total with taxes is {trimValues(sumWithTax)} $</p>
           </div>
           <div>
             <CreateExpense />
