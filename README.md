@@ -30,6 +30,14 @@ npm install
 # Run Locally
 npm start
 
+# Run in docker
+docker build -t dynaview:1.0.0 .
+
+#Get docker image from list of images
+docker images
+
+#Run docker image
+docker run -it -p 3000:3000 <imageId>
 ```
 
 ## Application Snippet
